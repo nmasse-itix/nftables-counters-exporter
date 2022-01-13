@@ -1,0 +1,31 @@
+#!/usr/sbin/nft -f
+
+#flush table inet ip-counter
+#delete table inet ip-counter
+
+table inet ip-counter {
+
+    counter IPv6-In {
+    }
+    counter IPv6-Out {
+    }
+    counter IPv4-In {
+    }
+    counter IPv4-Out {
+    }
+
+    chain in {
+        type filter hook input priority filter; policy accept;
+
+        meta nfproto ipv4 iifname != lo counter name IPv4-In
+        meta nfproto ipv6 iifname != lo counter name IPv6-In
+    }
+
+    chain out {
+        type filter hook output priority filter; policy accept;
+
+        meta nfproto ipv4 iifname != lo counter name IPv4-Out
+        meta nfproto ipv6 iifname != lo counter name IPv6-Out
+    }
+
+}
